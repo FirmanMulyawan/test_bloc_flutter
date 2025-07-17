@@ -1,33 +1,70 @@
-import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+export 'package:go_router/go_router.dart';
 
-import '../../features/home/binding/home_binding.dart';
-import '../../features/home/presentation/home_screen.dart';
-import '../../features/splash/binding/splash_binding.dart';
-import '../../features/splash/presentation/splash_screen.dart';
-import '../../features/surah/binding/surah_binding.dart';
-import '../../features/surah/presentation/surah_screen.dart';
+import '../../features/detail/detail_screen.dart';
+import '../../features/home/home_screen.dart';
+import '../../features/login/login_screen.dart';
+import '../../features/splash/splash_cubit.dart';
+import '../../features/splash/splash_screen.dart';
+import '../../main.dart';
 
 class AppRoute {
-  static const String defaultRoute = '/';
-  static const String notFound = '/notFound';
-  static const String home = '/home';
-  static const String surah = '/surah';
+  // path
+  static const String pathDefaultRoute = '/';
+  static const String pathLogin = '/pathLogin';
+  static const String pathHome = '/pathHome';
+  static const String pathDetail = 'pathDetail';
 
-  static List<GetPage> pages = [
-    GetPage(
-      name: defaultRoute,
-      page: () => const SplashScreen(),
-      binding: SplashBinding(),
-    ),
-    GetPage(
-      name: home,
-      page: () => const HomeScreen(),
-      binding: HomeBinding(),
-    ),
-    GetPage(
-      name: surah,
-      page: () => const SurahScreen(),
-      binding: SurahBinding(),
-    ),
-  ];
+  // name
+  static const String defaultNameRoute = 'defaultNameRoute';
+  static const String login = 'login';
+  static const String home = 'home';
+  static const String detail = 'detail';
+
+  // The route configuration.
+  static GoRouter router = GoRouter(
+    // errorBuilder: (context, state) {
+    //   return;
+    // },
+    initialLocation: pathDefaultRoute,
+    // debugLogDiagnostics: true,
+    navigatorKey: AppNav.navigatorKey,
+    routerNeglect: true,
+    routes: <RouteBase>[
+      GoRoute(
+        path: pathDefaultRoute,
+        name: defaultNameRoute,
+        builder: (BuildContext context, GoRouterState state) {
+          return BlocProvider(
+            create: (_) => SplashCubit()..startProgress(),
+            child: const SplashScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: pathLogin,
+        name: login,
+        builder: (BuildContext context, GoRouterState state) {
+          return const LoginScreen();
+        },
+      ),
+      GoRoute(
+          path: pathHome,
+          name: home,
+          builder: (BuildContext context, GoRouterState state) {
+            return const HomeScreen();
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: pathDetail,
+              name: detail,
+              builder: (BuildContext context, GoRouterState state) {
+                return const DetailScreen();
+              },
+            ),
+          ]),
+    ],
+  );
 }

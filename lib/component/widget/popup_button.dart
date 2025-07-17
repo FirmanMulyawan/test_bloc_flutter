@@ -1,9 +1,11 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import '../config/app_config.dart';
 import '../config/app_style.dart';
 import '../util/storage_util.dart';
+
+final IStorage storage = getIt.get<IStorage>();
 
 class PopupButton extends StatefulWidget {
   const PopupButton({
@@ -34,6 +36,19 @@ class PopupButton extends StatefulWidget {
 class _PopupButtonState extends State<PopupButton> {
   double get buttonDepth => widget.size * 0.2;
   bool _isPressed = false;
+  late final AudioPlayer _player;
+
+  @override
+  void initState() {
+    super.initState();
+    _player = AudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
 
   void _onTapDown(_) {
     if (widget.onPressed != null) {
@@ -50,7 +65,6 @@ class _PopupButtonState extends State<PopupButton> {
       });
       playLocalAsset();
       widget.onPressed?.call();
-      // });
     }
   }
 
@@ -82,6 +96,7 @@ class _PopupButtonState extends State<PopupButton> {
         borderRadius: radius,
       ),
       child: GestureDetector(
+        // behavior: HitTestBehavior.opaque,
         onTapDown: _onTapDown,
         onTapUp: _onTapUp,
         onTapCancel: _onTapCancel,
@@ -162,8 +177,7 @@ class _PopupButtonState extends State<PopupButton> {
   }
 
   void playLocalAsset() async {
-    StorageUtil storage = Get.find();
-    final isMute = await storage.isMute() ?? false;
+    final isMute = await storage.isMute();
     if (!isMute) {
       final player = AudioPlayer();
       player.play(AssetSource('sounds/button_submit.mp3'));

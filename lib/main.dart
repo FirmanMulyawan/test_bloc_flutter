@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart';
 
+import 'component/config/app_config.dart';
 import 'component/config/app_const.dart';
 import 'component/config/app_route.dart';
 import 'component/config/app_style.dart';
+import 'component/di/injector.dart';
+import 'component/services/route_service.dart';
 import 'component/util/storage_util.dart';
 
 final logger = Logger(
@@ -16,43 +18,63 @@ final logger = Logger(
   ]),
 );
 
+class AppNav {
+  static final _navigatorKey = GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
+
+  static BuildContext? get maybeContext => navigatorKey.currentContext;
+  static BuildContext get context => maybeContext!;
+
+  static bool get hasNavigator => navigatorKey.currentState != null;
+  static NavigatorState get navigator => _navigatorKey.currentState!;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-  await _dependencyInjection();
+  await _initPreAppServices();
 
   runApp(const MyApp());
 }
 
-Future _dependencyInjection() async {
-  final storage = StorageUtil(SecureStorage());
-  Get.lazyPut(() => storage, fenix: true);
+Future<void> _initPreAppServices() async {
+  await dotenv.load(fileName: '.env');
+
+  await dependencyInjection();
+
+  final storage = getIt.get<IStorage>();
+  await _checkInitRoute(storage);
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: AppConst.appName,
-      initialRoute: AppRoute.defaultRoute,
-      // theme: AppTheme.themeLight,
-      theme: AppStyle.themeData(context),
-      unknownRoute: GetPage(
-          name: AppRoute.notFound, page: () => const UnknownRoutePage()),
-      getPages: AppRoute.pages,
-    );
+Future _checkInitRoute(IStorage storage) async {
+  final token = await storage.getLoginToken();
+  if (token != null) {
+    await RouteService.set(RouteStatus.loggedIn);
+  } else {
+    await RouteService.set(RouteStatus.notLoggedIn);
   }
 }
 
-class UnknownRoutePage extends StatelessWidget {
-  const UnknownRoutePage({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('No route defined for this page')),
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1.0)),
+      child: MaterialApp.router(
+        title: AppConst.appName,
+        // debugShowCheckedModeBanner: false,
+        routerConfig: AppRoute.router,
+        // theme: AppTheme.themeLight,
+        theme: AppStyle.themeData(context),
+      ),
     );
   }
 }

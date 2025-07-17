@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
+import '../../main.dart';
 import '../config/app_route.dart';
 
 class Network {
@@ -16,7 +16,8 @@ class Network {
       return handle.next(option);
     }, onError: (error, handle) async {
       if (error.response?.statusCode == 401) {
-        await Get.offNamedUntil(AppRoute.defaultRoute, (route) => false);
+        // await Get.offNamedUntil(AppRoute.defaultRoute, (route) => false);
+        AppNav.context.goNamed(AppRoute.login);
       } else {
         handle.next(error);
       }

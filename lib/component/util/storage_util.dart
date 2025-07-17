@@ -1,23 +1,42 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../ext/string_ext.dart';
 
-class StorageUtil {
-  final IStorage _storage;
-  final String _isMute = "isMute";
-  final String _token = 'token';
+const _isMute = "isMute";
+const _token = 'token';
 
-  StorageUtil(this._storage);
+extension StorageUtil on IStorage {
+  Future<bool> isLoggedIn() async {
+    return await getLoginToken() != null;
+  }
 
-  Future<bool?> isMute() => _storage.readBoolean(key: _isMute);
-  setMute(String isMute) => _storage.write(key: _isMute, value: isMute);
+  Future setLoginToken(String token) async {
+    await write(
+      key: _token,
+      value: token,
+    );
+  }
 
-  Future<String?> getToken() => _storage.read(key: _token);
-  Future<void> setToken(String token) =>
-      _storage.write(key: _token, value: token);
+  Future<String?> getLoginToken() async {
+    return await read(
+      key: _token,
+    );
+  }
 
-  Future<void> removeAll() => _storage.deleteAll();
-  Future<void> removeLogin() async {
-    await _storage.delete(key: _token);
+  Future<bool> isMute() async {
+    return await getIsMute() != null;
+  }
+
+  Future setIsMute(String mute) async {
+    await write(
+      key: _isMute,
+      value: mute,
+    );
+  }
+
+  Future<String?> getIsMute() async {
+    return await read(
+      key: _isMute,
+    );
   }
 }
 
