@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quran_app/component/bloc/user_bloc.dart';
+import 'package:quran_app/component/bloc/user_event.dart';
+import 'package:quran_app/component/bloc/user_state.dart';
 import 'package:quran_app/component/config/app_route.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as svg_provider;
 
 import '../../component/config/app_const.dart';
 import '../../component/config/app_style.dart';
+import '../../component/model/user_list_response.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +19,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    context.read<UserBloc>().add(LoadUserEvent());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,36 +83,71 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 20,
           ),
-          Expanded(
-              child: RefreshIndicator(
-            onRefresh: () {
-              return Future.value();
-            },
-            child: Skeletonizer(
-              enabled: false,
-              child: ListView.separated(
-                  itemCount: 10 + 1,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  separatorBuilder: (ctx, index) {
-                    return const SizedBox(
-                      height: 20,
-                    );
+          Expanded(child: BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              if (state is UserLoadingState) {
+                return Skeletonizer(
+                  enabled: true,
+                  child: ListView.separated(
+                      itemCount: 10,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      separatorBuilder: (ctx, index) {
+                        return const SizedBox(
+                          height: 20,
+                        );
+                      },
+                      itemBuilder: (ctx, index) {
+                        return _cardSurah(
+                          isLoading: true,
+                          email: 'firmanmulyawan491@gmail.com',
+                          firstName: 'Firman',
+                          lastName: 'Mulyawan',
+                          urlImage: 'https://reqres.in/img/faces/1-image.jpg',
+                        );
+                      }),
+                );
+              }
+
+              if (state is UserErrorState) {
+                return const Center(child: Text("Error"));
+              }
+
+              if (state is UserSuccessState) {
+                List<Datum> userList = state.userListResponse.data;
+
+                return RefreshIndicator(
+                  onRefresh: () {
+                    return Future.value();
                   },
-                  itemBuilder: (ctx, index) {
-                    if (index == 10) {
-                      return const SizedBox(height: 200);
-                    }
-                    return _cardSurah(
-                        isLoading: true,
-                        email: 'firmanmulyawan491@gmail.com',
-                        firstName: 'Firman',
-                        lastName: 'Mulyawan',
-                        urlImage: 'https://reqres.in/img/faces/1-image.jpg',
-                        onTap: () {
-                          context.pushNamed(AppRoute.detail);
-                        });
-                  }),
-            ),
+                  child: userList.isNotEmpty
+                      ? ListView.separated(
+                          itemCount: userList.length + 1,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          separatorBuilder: (ctx, index) {
+                            return const SizedBox(
+                              height: 20,
+                            );
+                          },
+                          itemBuilder: (ctx, index) {
+                            if (index == userList.length) {
+                              return const SizedBox(height: 200);
+                            }
+                            return _cardSurah(
+                                isLoading: true,
+                                email: userList[index].email,
+                                firstName: userList[index].firstName,
+                                lastName: userList[index].lastName,
+                                urlImage: userList[index].avatar,
+                                onTap: () {
+                                  context.pushNamed(AppRoute.detail);
+                                });
+                          })
+                      : const Center(child: Text("No Data Found")),
+                );
+              }
+
+              return Container();
+            },
           ))
         ]));
   }

@@ -1,93 +1,100 @@
+// To parse this JSON data, do
+//
+//     final userListResponse = userListResponseFromJson(jsonString);
+
+import 'dart:convert';
+
+UserListResponse userListResponseFromJson(String str) =>
+    UserListResponse.fromJson(json.decode(str));
+
+String userListResponseToJson(UserListResponse data) =>
+    json.encode(data.toJson());
+
 class UserListResponse {
-  int? page;
-  int? perPage;
-  int? total;
-  int? totalPages;
-  List<Data>? data;
-  Support? support;
+  int page;
+  int perPage;
+  int total;
+  int totalPages;
+  List<Datum> data;
+  Support support;
 
-  UserListResponse(
-      {this.page,
-      this.perPage,
-      this.total,
-      this.totalPages,
-      this.data,
-      this.support});
+  UserListResponse({
+    required this.page,
+    required this.perPage,
+    required this.total,
+    required this.totalPages,
+    required this.data,
+    required this.support,
+  });
 
-  UserListResponse.fromJson(Map<String, dynamic> json) {
-    page = json['page'];
-    perPage = json['per_page'];
-    total = json['total'];
-    totalPages = json['total_pages'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
-      });
-    }
-    support =
-        json['support'] != null ? Support.fromJson(json['support']) : null;
-  }
+  factory UserListResponse.fromJson(Map<String, dynamic> json) =>
+      UserListResponse(
+        page: json["page"],
+        perPage: json["per_page"],
+        total: json["total"],
+        totalPages: json["total_pages"],
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        support: Support.fromJson(json["support"]),
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['page'] = page;
-    data['per_page'] = perPage;
-    data['total'] = total;
-    data['total_pages'] = totalPages;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    if (support != null) {
-      data['support'] = support!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "page": page,
+        "per_page": perPage,
+        "total": total,
+        "total_pages": totalPages,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+        "support": support.toJson(),
+      };
 }
 
-class Data {
-  int? id;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? avatar;
+class Datum {
+  int id;
+  String email;
+  String firstName;
+  String lastName;
+  String avatar;
 
-  Data({this.id, this.email, this.firstName, this.lastName, this.avatar});
+  Datum({
+    required this.id,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.avatar,
+  });
 
-  Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    email = json['email'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    avatar = json['avatar'];
-  }
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+        id: json["id"],
+        email: json["email"],
+        firstName: json["first_name"],
+        lastName: json["last_name"],
+        avatar: json["avatar"],
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['email'] = email;
-    data['first_name'] = firstName;
-    data['last_name'] = lastName;
-    data['avatar'] = avatar;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "email": email,
+        "first_name": firstName,
+        "last_name": lastName,
+        "avatar": avatar,
+      };
 }
 
 class Support {
-  String? url;
-  String? text;
+  String url;
+  String text;
 
-  Support({this.url, this.text});
+  Support({
+    required this.url,
+    required this.text,
+  });
 
-  Support.fromJson(Map<String, dynamic> json) {
-    url = json['url'];
-    text = json['text'];
-  }
+  factory Support.fromJson(Map<String, dynamic> json) => Support(
+        url: json["url"],
+        text: json["text"],
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['url'] = url;
-    data['text'] = text;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "url": url,
+        "text": text,
+      };
 }

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:quran_app/component/bloc/user_bloc.dart';
+import 'package:quran_app/component/repository/user_repository.dart';
 
 import 'component/config/app_config.dart';
 import 'component/config/app_const.dart';
 import 'component/config/app_route.dart';
 import 'component/config/app_style.dart';
 import 'component/di/injector.dart';
+import 'component/provider/user_provider.dart';
 import 'component/services/route_service.dart';
 import 'component/util/storage_util.dart';
 
@@ -65,15 +69,21 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context)
-          .copyWith(textScaler: const TextScaler.linear(1.0)),
-      child: MaterialApp.router(
-        title: AppConst.appName,
-        // debugShowCheckedModeBanner: false,
-        routerConfig: AppRoute.router,
-        // theme: AppTheme.themeLight,
-        theme: AppStyle.themeData(context),
+    return RepositoryProvider(
+      create: (context) => UserRepository(UserProvider()),
+      child: BlocProvider(
+        create: (context) => UserBloc(context.read<UserRepository>()),
+        child: MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(1.0)),
+          child: MaterialApp.router(
+            title: AppConst.appName,
+            // debugShowCheckedModeBanner: false,
+            routerConfig: AppRoute.router,
+            // theme: AppTheme.themeLight,
+            theme: AppStyle.themeData(context),
+          ),
+        ),
       ),
     );
   }
