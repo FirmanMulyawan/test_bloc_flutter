@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:quran_app/component/config/app_route.dart';
 
 import '../../component/config/app_const.dart';
 import '../../component/config/app_style.dart';
@@ -160,7 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
               size: 50,
               color: AppStyle.mainOrange,
               shadowColor: AppStyle.hoverOrange,
-              onPressed: () {},
+              onPressed: () {
+                context.goNamed(AppRoute.home);
+              },
               child: Center(
                 child: Text(
                   'login',

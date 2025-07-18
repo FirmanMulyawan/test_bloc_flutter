@@ -1,7 +1,7 @@
-# 📌 Tech Spec: Quran App
+# 📌 Tech Spec: User App
 
 ## 1.  Project Overview
-      - **Project Name:** Quran App  
+      - **Project Name:** User App  
       - **Description:**  
              A simple digital Al-Qur'an application that displays a list of surahs, full ayat content, and supporting features such as audio playback and loading animations. Built with Flutter using the lightweight and efficient GetX architecture.
       - **API Endpoint:** [https://open-api.my.id/quran](https://open-api.my.id/quran)  

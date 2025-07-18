@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConst {
-  static String appName = "Quran App";
+  static String appName = "User App";
   static bool isDebuggable = true;
   static String appUrl = '${dotenv.env['API_LINK']!}/api/';
 
