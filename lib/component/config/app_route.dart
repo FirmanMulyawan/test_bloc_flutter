@@ -9,6 +9,9 @@ import '../../features/login/login_screen.dart';
 import '../../features/splash/splash_cubit.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../main.dart';
+import '../bloc/login_bloc.dart';
+import '../repository/user_repository.dart';
+import '../util/storage_util.dart';
 
 class AppRoute {
   // path
@@ -47,7 +50,13 @@ class AppRoute {
         path: pathLogin,
         name: login,
         builder: (BuildContext context, GoRouterState state) {
-          return const LoginScreen();
+          return BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+              userRepository: context.read<UserRepository>(),
+              storage: context.read<IStorage>(),
+            ),
+            child: const LoginScreen(),
+          );
         },
       ),
       GoRoute(

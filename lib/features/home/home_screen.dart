@@ -19,6 +19,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _searchKeyword = '';
+
   @override
   void initState() {
     context.read<UserBloc>().add(LoadUserEvent());
@@ -48,7 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 FocusManager.instance.primaryFocus?.unfocus();
               },
               onChanged: (value) {
-                // controller.updateKeyword();
+                setState(() {
+                  _searchKeyword = value;
+                });
               },
               style: AppStyle.regular(
                 size: 20,
@@ -115,14 +119,22 @@ class _HomeScreenState extends State<HomeScreen> {
               if (state is UserSuccessState) {
                 List<Datum> userList = state.userListResponse.data;
 
+                // Filter user berdasarkan keyword
+                final filteredList = userList.where((user) {
+                  final keyword = _searchKeyword.toLowerCase();
+                  return user.firstName.toLowerCase().contains(keyword) ||
+                      user.lastName.toLowerCase().contains(keyword) ||
+                      user.email.toLowerCase().contains(keyword);
+                }).toList();
+
                 return RefreshIndicator(
                   onRefresh: () {
                     context.read<UserBloc>().add(LoadUserEvent());
                     return Future.value();
                   },
-                  child: userList.isNotEmpty
+                  child: filteredList.isNotEmpty
                       ? ListView.separated(
-                          itemCount: userList.length + 1,
+                          itemCount: filteredList.length + 1,
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           separatorBuilder: (ctx, index) {
                             return const SizedBox(
@@ -130,19 +142,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                           itemBuilder: (ctx, index) {
-                            if (index == userList.length) {
+                            if (index == filteredList.length) {
                               return const SizedBox(height: 200);
                             }
                             return _cardUser(
                                 isLoading: true,
-                                email: userList[index].email,
-                                firstName: userList[index].firstName,
-                                lastName: userList[index].lastName,
-                                urlImage: userList[index].avatar,
+                                email: filteredList[index].email,
+                                firstName: filteredList[index].firstName,
+                                lastName: filteredList[index].lastName,
+                                urlImage: filteredList[index].avatar,
                                 onTap: () {
                                   context.pushNamed(AppRoute.detail,
                                       queryParameters: {
-                                        'userId': userList[index].id.toString()
+                                        'userId':
+                                            filteredList[index].id.toString()
                                       });
                                 });
                           })

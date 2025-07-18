@@ -1,6 +1,8 @@
 import 'package:quran_app/component/api/api_client.dart';
 
 import '../config/app_config.dart';
+import '../model/login_request.dart';
+import '../model/login_response.dart';
 import '../model/user_id_response.dart';
 import '../model/user_list_response.dart';
 
@@ -21,6 +23,15 @@ class UserProvider {
     try {
       final response = await apiClient.getUserById(usersId);
 
+      return response;
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
+
+  Future<LoginResponse> postLogin(LoginRequest request) async {
+    try {
+      final response = await apiClient.postLogin(request);
       return response;
     } catch (e) {
       return Future.error(e.toString());

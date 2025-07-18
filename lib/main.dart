@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:quran_app/component/bloc/user_bloc.dart';
 import 'package:quran_app/component/repository/user_repository.dart';
 
+import 'component/bloc/login_bloc.dart';
 import 'component/bloc/user_by_id_bloc.dart';
 import 'component/config/app_config.dart';
 import 'component/config/app_const.dart';
@@ -75,6 +76,9 @@ class _MyAppState extends State<MyApp> {
         RepositoryProvider<UserRepository>(
           create: (_) => UserRepository(UserProvider()),
         ),
+        RepositoryProvider<IStorage>(
+          create: (_) => SecureStorage(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -83,6 +87,12 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<UserByIdBloc>(
             create: (context) => UserByIdBloc(context.read<UserRepository>()),
+          ),
+          BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+              userRepository: context.read<UserRepository>(),
+              storage: context.read<IStorage>(),
+            ),
           ),
         ],
         child: MediaQuery(
