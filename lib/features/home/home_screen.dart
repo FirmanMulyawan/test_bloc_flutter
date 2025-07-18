@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quran_app/component/config/app_route.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as svg_provider;
 
@@ -96,7 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         firstName: 'Firman',
                         lastName: 'Mulyawan',
                         urlImage: 'https://reqres.in/img/faces/1-image.jpg',
-                        onTap: () {});
+                        onTap: () {
+                          context.pushNamed(AppRoute.detail);
+                        });
                   }),
             ),
           ))
