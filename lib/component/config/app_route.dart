@@ -61,7 +61,9 @@ class AppRoute {
               path: pathDetail,
               name: detail,
               builder: (BuildContext context, GoRouterState state) {
-                return const DetailScreen();
+                final userId = state.uri.queryParameters['userId'];
+
+                return DetailScreen(userId: userId);
               },
             ),
           ]),

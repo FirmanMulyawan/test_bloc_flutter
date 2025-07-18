@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 size: 20,
               ),
               decoration: InputDecoration(
-                hintText: "Search Surah",
+                hintText: "Search User",
                 hintStyle: AppStyle.regular(
                   size: 20,
                   textColor: AppStyle.searchHintColor,
@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                       itemBuilder: (ctx, index) {
-                        return _cardSurah(
+                        return _cardUser(
                           isLoading: true,
                           email: 'firmanmulyawan491@gmail.com',
                           firstName: 'Firman',
@@ -117,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 return RefreshIndicator(
                   onRefresh: () {
+                    context.read<UserBloc>().add(LoadUserEvent());
                     return Future.value();
                   },
                   child: userList.isNotEmpty
@@ -132,14 +133,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (index == userList.length) {
                               return const SizedBox(height: 200);
                             }
-                            return _cardSurah(
+                            return _cardUser(
                                 isLoading: true,
                                 email: userList[index].email,
                                 firstName: userList[index].firstName,
                                 lastName: userList[index].lastName,
                                 urlImage: userList[index].avatar,
                                 onTap: () {
-                                  context.pushNamed(AppRoute.detail);
+                                  context.pushNamed(AppRoute.detail,
+                                      queryParameters: {
+                                        'userId': userList[index].id.toString()
+                                      });
                                 });
                           })
                       : const Center(child: Text("No Data Found")),
@@ -152,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ]));
   }
 
-  Widget _cardSurah({
+  Widget _cardUser({
     void Function()? onTap,
     String email = '',
     String firstName = '',

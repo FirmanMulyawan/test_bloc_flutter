@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:quran_app/component/bloc/user_bloc.dart';
 import 'package:quran_app/component/repository/user_repository.dart';
 
+import 'component/bloc/user_by_id_bloc.dart';
 import 'component/config/app_config.dart';
 import 'component/config/app_const.dart';
 import 'component/config/app_route.dart';
@@ -69,10 +70,21 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => UserRepository(UserProvider()),
-      child: BlocProvider(
-        create: (context) => UserBloc(context.read<UserRepository>()),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<UserRepository>(
+          create: (_) => UserRepository(UserProvider()),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<UserBloc>(
+            create: (context) => UserBloc(context.read<UserRepository>()),
+          ),
+          BlocProvider<UserByIdBloc>(
+            create: (context) => UserByIdBloc(context.read<UserRepository>()),
+          ),
+        ],
         child: MediaQuery(
           data: MediaQuery.of(context)
               .copyWith(textScaler: const TextScaler.linear(1.0)),

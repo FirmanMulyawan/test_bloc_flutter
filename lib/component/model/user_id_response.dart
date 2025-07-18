@@ -1,70 +1,82 @@
+// To parse this JSON data, do
+//
+//     final userIdResponse = userIdResponseFromJson(jsonString);
+
+import 'dart:convert';
+
+UserIdResponse userIdResponseFromJson(String str) =>
+    UserIdResponse.fromJson(json.decode(str));
+
+String userIdResponseToJson(UserIdResponse data) => json.encode(data.toJson());
+
 class UserIdResponse {
-  Data? data;
-  Support? support;
+  Data data;
+  Support support;
 
-  UserIdResponse({this.data, this.support});
+  UserIdResponse({
+    required this.data,
+    required this.support,
+  });
 
-  UserIdResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
-    support =
-        json['support'] != null ? Support.fromJson(json['support']) : null;
-  }
+  factory UserIdResponse.fromJson(Map<String, dynamic> json) => UserIdResponse(
+        data: Data.fromJson(json["data"]),
+        support: Support.fromJson(json["support"]),
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    if (support != null) {
-      data['support'] = support!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "data": data.toJson(),
+        "support": support.toJson(),
+      };
 }
 
 class Data {
-  int? id;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? avatar;
+  int id;
+  String email;
+  String firstName;
+  String lastName;
+  String avatar;
 
-  Data({this.id, this.email, this.firstName, this.lastName, this.avatar});
+  Data({
+    required this.id,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.avatar,
+  });
 
-  Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    email = json['email'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    avatar = json['avatar'];
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        id: json["id"],
+        email: json["email"],
+        firstName: json["first_name"],
+        lastName: json["last_name"],
+        avatar: json["avatar"],
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['email'] = email;
-    data['first_name'] = firstName;
-    data['last_name'] = lastName;
-    data['avatar'] = avatar;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "email": email,
+        "first_name": firstName,
+        "last_name": lastName,
+        "avatar": avatar,
+      };
 }
 
 class Support {
-  String? url;
-  String? text;
+  String url;
+  String text;
 
-  Support({this.url, this.text});
+  Support({
+    required this.url,
+    required this.text,
+  });
 
-  Support.fromJson(Map<String, dynamic> json) {
-    url = json['url'];
-    text = json['text'];
-  }
+  factory Support.fromJson(Map<String, dynamic> json) => Support(
+        url: json["url"],
+        text: json["text"],
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['url'] = url;
-    data['text'] = text;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "url": url,
+        "text": text,
+      };
 }

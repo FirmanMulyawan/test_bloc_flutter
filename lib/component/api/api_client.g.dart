@@ -46,13 +46,12 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<UserListResponse> getUserList(String? usersId) async {
+  Future<UserIdResponse> getUserById(String usersId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<UserListResponse>(
+    final _options = _setStreamType<UserIdResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -63,9 +62,9 @@ class _ApiClient implements ApiClient {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UserListResponse _value;
+    late UserIdResponse _value;
     try {
-      _value = UserListResponse.fromJson(_result.data!);
+      _value = UserIdResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -74,7 +73,7 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<UserListResponse> getUsers(int page, int perPage) async {
+  Future<UserListResponse> getUserList(int page, int perPage) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'page': page,

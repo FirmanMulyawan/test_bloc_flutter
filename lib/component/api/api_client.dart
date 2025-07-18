@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../model/create_user_request.dart';
 import '../model/create_user_response.dart';
+import '../model/user_id_response.dart';
 import '../model/user_list_response.dart';
 
 part 'api_client.g.dart';
@@ -15,12 +16,12 @@ abstract class ApiClient {
   Future<CreateUserResponse> postCreateUser(@Body() CreateUserRequest task);
 
   @GET('users/{usersId}')
-  Future<UserListResponse> getUserList(
-      @Path() String? usersId,
+  Future<UserIdResponse> getUserById(
+      @Path("usersId") String usersId,
   );
 
   @GET('users')
-  Future<UserListResponse> getUsers(
+  Future<UserListResponse> getUserList(
     @Query("page") int page,
     @Query("per_page") int perPage,
   );
